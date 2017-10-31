@@ -22,7 +22,7 @@ $ go get github.com/Silvin/booking
 
 How to Use ...
 
-```sh
+```go
 import (
 	"fmt"
 	"github.com/Silvin/booking"
