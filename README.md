@@ -9,7 +9,9 @@ This library was written on.
   - MongoDB
   
 
+### Pre Installation
 
+*You must have installed a mongodb server*
 
 ### Installation
 
