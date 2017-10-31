@@ -58,12 +58,12 @@ func (this *Event) getPaymentCommision(id bson.ObjectId) (Comission, error) {
 	return Comission{}, errors.New("Invalid Payment Type")
 }
 
-func (this *Event) GetAll(DB *mgo.Database) ([]A, error) {
-	events := []Event{}
+// func (this *Event) GetAll(DB *mgo.Database) ([]A, error) {
+// 	events := []Event{}
 
-	DB.C(this.GetTableName()).Find(bson.M{}).All(&events)
-	return events, nil
-}
+// 	DB.C(this.GetTableName()).Find(bson.M{}).All(&events)
+// 	return events, nil
+// }
 
 // func (this *Event) Find(DB *mgo.Database, search bson.M) ([]Event, error) {
 

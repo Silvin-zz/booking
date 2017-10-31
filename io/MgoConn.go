@@ -2,9 +2,10 @@ package io
 
 import (
 	"fmt"
+	"time"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 var session *mgo.Session
@@ -14,10 +15,7 @@ type MgoConn struct {
 	Conn *mgo.Session
 }
 
-/**
-* Create a MongoDB Connection
-*
-**/
+//Create a MongoDB Connection
 func (this *MgoConn) New(url string, database string) (error, string) {
 
 	//we can use a auth parameters in production
@@ -26,10 +24,12 @@ func (this *MgoConn) New(url string, database string) (error, string) {
 		Database: database,
 		Timeout:  10 * time.Second,
 	}
+
 	sess, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
 		return err, fmt.Sprintf("The connect with mongoDB %s database in %s was faild", database, url)
 	}
+
 	session = sess
 	session.SetMode(mgo.Monotonic, true)
 	this.Conn = session.Copy()
@@ -38,25 +38,26 @@ func (this *MgoConn) New(url string, database string) (error, string) {
 
 }
 
-/*
-* Close a MongoDB Connection
- */
+//Close a MongoDB Connection
 func (this *MgoConn) Close() {
 	session.Close()
 }
 
+//Get All Elements in the collection
 func (this *MgoConn) GetAll(collectionName string, result interface{}) error {
 
 	return this.DB.C(collectionName).Find(bson.M{}).All(result)
 
 }
 
+//Find a Elements into the database
 func (this *MgoConn) Find(collectionName string, search bson.M, result interface{}) error {
 
 	return this.DB.C(collectionName).Find(search).All(result)
 
 }
 
+//Update a Element into the database
 func (this *MgoConn) Update(collectionName string, search bson.M, change bson.M, result interface{}) error {
 	return this.DB.C(collectionName).Update(search, change)
 

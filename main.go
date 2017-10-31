@@ -51,15 +51,16 @@ func main() {
 	event := models.Event{bson.NewObjectId(), "Corona Capital", client.Id, clientComission}
 	db.DB.C(event.GetTableName()).Insert(event)
 
-	total, err := event.GetTotal(paypal.Id, 2, 100)
+	total, err := event.GetTotal(paypal.Id, 1, 100)
 	if err == nil {
 
-		fmt.Println(total)
+		fmt.Printf("%.2f", total)
 	} else {
 
 		fmt.Println(err.Error())
 	}
 
+	//sync.Find(bson.M{"_id": bson.ObjectIdHex(request.Id)})
 	events := []*models.Event{}
 	db.GetAll(event.GetTableName(), &events)
 	fmt.Println(events[0].Name)
