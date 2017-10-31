@@ -2,10 +2,9 @@ package io
 
 import (
 	"fmt"
-	"time"
-
-	"github.com/astaxie/beego"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 var session *mgo.Session
@@ -24,7 +23,7 @@ func (this *MgoConn) New(url string, database string) (error, string) {
 	//we can use a auth parameters in production
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{url},
-		Database: beego.AppConfig.String(database),
+		Database: database,
 		Timeout:  10 * time.Second,
 	}
 	sess, err := mgo.DialWithInfo(mongoDBDialInfo)
@@ -44,4 +43,21 @@ func (this *MgoConn) New(url string, database string) (error, string) {
  */
 func (this *MgoConn) Close() {
 	session.Close()
+}
+
+func (this *MgoConn) GetAll(collectionName string, result interface{}) error {
+
+	return this.DB.C(collectionName).Find(bson.M{}).All(result)
+
+}
+
+func (this *MgoConn) Find(collectionName string, search bson.M, result interface{}) error {
+
+	return this.DB.C(collectionName).Find(search).All(result)
+
+}
+
+func (this *MgoConn) Update(collectionName string, search bson.M, change bson.M, result interface{}) error {
+	return this.DB.C(collectionName).Update(search, change)
+
 }
