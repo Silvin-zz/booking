@@ -32,17 +32,17 @@ import (
 	"github.com/Silvin/booking/models"
 )
 
-func main(){
-	//Set the database connection
-	booking := Booking{}
-	booking.Init("127.0.0.1:27017", "test") //After we going to implement auth access
-	booking.RemoveDB()                      //Remove the database if exists
+func main() {
+	booking := booking.Booking{}
+	booking.Init("127.0.0.1:27017", "test")
+	booking.RemoveDB() //Remove the database if exists
 
 	//Define the payments type
 	paypal, _ := booking.AddPaymentType("PayPal")
 	mastercard, _ := booking.AddPaymentType("Mastercard")
 
 	//Generate a Base commision
+
 	comissions := []models.Comission{}
 	comissions = append(comissions, booking.AddCommission(paypal, 5, 1))
 	comissions = append(comissions, booking.AddCommission(mastercard, 4, 1.5))
@@ -84,7 +84,9 @@ func main(){
 	fmt.Println(fmt.Sprintf("Base Comission: %.2f", masterCost.TotalBase))
 	fmt.Println(fmt.Sprintf("Percentage Comission: %.2f", masterCost.TotalPercentageCommision))
 	fmt.Println(fmt.Sprintf("Total: %.2f", masterCost.Cost))
+
 }
+
 
 ```
 
