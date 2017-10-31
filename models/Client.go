@@ -6,6 +6,7 @@ type Client struct {
 	Id            bson.ObjectId `bson:"_id,omitempty"       json:"Id"`
 	Name          string        `bson:"name"            	json:"Name"`
 	Username      string        `bson:"username"        	json:"Username"`
+	Password      string        `bson:"password"        	json:"-"`
 	BaseComission []Comission   `bson:"base_comission"  	json:"BaseCommision"`
 }
 

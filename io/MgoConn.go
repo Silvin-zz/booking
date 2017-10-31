@@ -45,9 +45,7 @@ func (this *MgoConn) Close() {
 
 //Get All Elements in the collection
 func (this *MgoConn) GetAll(collectionName string, result interface{}) error {
-
 	return this.DB.C(collectionName).Find(bson.M{}).All(result)
-
 }
 
 //Find a Elements into the database
@@ -58,7 +56,12 @@ func (this *MgoConn) Find(collectionName string, search bson.M, result interface
 }
 
 //Update a Element into the database
-func (this *MgoConn) Update(collectionName string, search bson.M, change bson.M, result interface{}) error {
+func (this *MgoConn) Update(collectionName string, search bson.M, change bson.M) error {
 	return this.DB.C(collectionName).Update(search, change)
 
+}
+
+//Remove a element.
+func (this *MgoConn) Delete(collectionName string, selector bson.M) error {
+	return this.DB.C(collectionName).Remove(selector)
 }
