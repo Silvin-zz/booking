@@ -39,47 +39,61 @@ func main() {
 	booking.Init("127.0.0.1:27017", "test")
 	booking.RemoveDB() //Remove the database if exists
 
-	// *** Define the payments type
-	paypal, _ := booking.AddPaymentType("PayPal")
-	mastercard, _ := booking.AddPaymentType("Mastercard")
-	american, _ := booking.AddPaymentType("American Express")
+	    //Define the payments type
+    paypal, _ := booking.AddPaymentType("PayPal")
+    mastercard, _ := booking.AddPaymentType("Mastercard")
+    american, _ := booking.AddPaymentType("American Express")
 
-	fmt.Println(paypal.Name)
-	fmt.Println(mastercard.Name)
-	fmt.Println(american.Name)
+    fmt.Println("... ... PAYMENTS ... ... ")
+    fmt.Println(paypal.Name)
+    fmt.Println(mastercard.Name)
+    fmt.Println(american.Name)
 
-	// *** Generate a Base commision
+    // //Generate a Base commision
 
-	defaultComission, _ := booking.AddCommission("Default", 5, false, true) // Comission with value
-	midComission, _ := booking.AddCommission("Medium", 5, true, true)       //Comission with percent
-	premiumComission, _ := booking.AddCommission("Premium", 4, false, true) //Comission with percent
+    defaultComission, _ := booking.AddCommission("Default", 5, false, true) // Comission with value
+    midComission, _ := booking.AddCommission("Medium", 2, true, true)       //Comission with percent
+    premiumComission, _ := booking.AddCommission("Premium", 4, false, true) //Comission with percent
 
-	fmt.Println(defaultComission.Name)
-	fmt.Println(midComission.Name)
-	fmt.Println(premiumComission.Name)
+    fmt.Println("... ... CLIENTS ... ... ")
+    fmt.Println(defaultComission.Name)
+    fmt.Println(midComission.Name)
+    fmt.Println(premiumComission.Name)
 
-	// *** Create a client with default comission
-	defaultComission, _ = booking.GetDefaultComission()
-	client, _ := booking.AddClient("Client 1", "client1", "pass", defaultComission)
+    // //Create a client with default comission
+    defaultComission, _ = booking.GetDefaultComission()
+    client, _ := booking.AddClient("Client 1", "client1", "pass", defaultComission)
 
-	fmt.Println(client.Name)
+    fmt.Println(client.Name)
 
-	// *** Create a custom comission based on defaultComission
-	customComission := defaultComission
-	customComission.IsDefault = false
-	customComission.Value = 2
-	customComission.Name = "Custom lollapalooza"
+    //Create a custom comission based on defaultComission
+    customComission := defaultComission
+    customComission.IsDefault = false
+    customComission.Value = 2
+    customComission.Name = "Custom lollapalooza"
 
-	// *** Add the new event with default commission
-	coronaCapital, _ := booking.AddEvent("Corona Capital", client.Id, defaultComission)
-	viveLatino, _ := booking.AddEvent("Vive Latino", client.Id, premiumComission)
-	lollapalooza, _ := booking.AddEvent("lollapalooza", client.Id, customComission)
+    // Add the new event with default commission
+    coronaCapital, _ := booking.AddEvent("Corona Capital", client.Id, midComission)
+    viveLatino, _ := booking.AddEvent("Vive Latino", client.Id, premiumComission)
+    lollapalooza, _ := booking.AddEvent("lollapalooza", client.Id, customComission)
 
-	fmt.Println(coronaCapital.Name)
-	fmt.Println(viveLatino.Name)
-	fmt.Println(lollapalooza.Name)
+    fmt.Println("... ... COMISSIONS ... ... ")
+    fmt.Println(coronaCapital.Name)
+    fmt.Println(viveLatino.Name)
+    fmt.Println(lollapalooza.Name)
+
+    //Calculate booking cost.
+
+    result, _ := booking.CalculateCost(coronaCapital, mastercard, 1, 500)
+
+    fmt.Println("... ... RESULT ... ... ")
+    fmt.Println(fmt.Sprintf("Quantity: %d", result.Quantity))
+    fmt.Println(fmt.Sprintf("Subtotal: %.2f", result.Subtotal))
+    fmt.Println(fmt.Sprintf("Comission: %.2f", result.TotalComission))
+    fmt.Println(fmt.Sprintf("Total: %.2f", result.Cost))
 
 }
+
 
 
 ```

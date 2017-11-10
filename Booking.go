@@ -2,6 +2,7 @@ package booking
 
 import (
 	"fmt"
+
 	"github.com/Silvin/booking/io"
 	"github.com/Silvin/booking/models"
 
@@ -34,26 +35,27 @@ func (this *Booking) AddPaymentType(name string) (models.PaymentType, error) {
 }
 
 //Add a new Client
-func (this *Booking) AddClient(name string, username string, password string, comissions []models.Comission) (models.Client, error) {
+func (this *Booking) AddClient(name string, username string, password string, comission models.Comission) (models.Client, error) {
 
-	client := models.Client{bson.NewObjectId(), name, username, password, comissions}
+	client := models.Client{bson.NewObjectId(), name, username, password, comission.Id}
 	err := this.db.DB.C(client.GetTableName()).Insert(client)
 	return client, err
 
 }
 
 //Add a new Event
-func (this *Booking) AddEvent(name string, clientId bson.ObjectId, comissions []models.Comission) (models.Event, error) {
+func (this *Booking) AddEvent(name string, clientId bson.ObjectId, comission models.Comission) (models.Event, error) {
 
-	event := models.Event{bson.NewObjectId(), name, clientId, comissions}
+	event := models.Event{bson.NewObjectId(), name, clientId, comission}
 	err := this.db.DB.C(event.GetTableName()).Insert(event)
 	return event, err
 }
 
 //Create a new Comission Object :)
-func (this *Booking) AddCommission(paymentType models.PaymentType, base float32, percentage float32) models.Comission {
-	comission := models.Comission{bson.NewObjectId(), paymentType, base, percentage}
-	return comission
+func (this *Booking) AddCommission(name string, value float32, isPercent bool, isDefault bool) (models.Comission, error) {
+	comission := models.Comission{bson.NewObjectId(), name, value, isPercent, isDefault}
+	err := this.db.DB.C(comission.GetTableName()).Insert(comission)
+	return comission, err
 }
 
 //Remove a payment
@@ -86,10 +88,10 @@ func (this *Booking) UpdateClient(client models.Client) error {
 		client.GetTableName(),
 		bson.M{"_id": client.Id.Hex()},
 		bson.M{"$set": bson.M{
-			"name":           client.Name,
-			"username":       client.Username,
-			"password":       client.Password,
-			"base_comission": client.BaseComission}})
+			"name":      client.Name,
+			"username":  client.Username,
+			"password":  client.Password,
+			"comission": client.Comission}})
 }
 
 //update event data
@@ -133,6 +135,39 @@ func (this *Booking) GetAllEvents() ([]models.Event, error) {
 	return events, err
 }
 
+//Get All Comissions
+func (this *Booking) GetAllComission() ([]models.Comission, error) {
+
+	comissions := []models.Comission{}
+	comission := models.Comission{}
+	err := this.db.GetAll(comission.GetTableName(), &comissions)
+	return comissions, err
+}
+
+//Get Default Commision
+func (this *Booking) GetDefaultComission() (models.Comission, error) {
+
+	comissions := []models.Comission{}
+	comission := models.Comission{}
+	err := this.db.Find(comission.GetTableName(), bson.M{"is_default": true}, &comissions)
+
+	if len(comissions) > 0 {
+		comission = comissions[0]
+	} else {
+
+		err = this.db.GetAll(comission.GetTableName(), &comissions)
+		if err == nil {
+
+			if len(comissions) > 0 {
+				comission = comissions[0]
+			}
+
+		}
+	}
+
+	return comission, err
+}
+
 //Get All Events by clients
 func (this *Booking) GetEventsByClient(client models.Client) ([]models.Event, error) {
 
@@ -143,7 +178,11 @@ func (this *Booking) GetEventsByClient(client models.Client) ([]models.Event, er
 }
 
 //Get real cost from a event
-func (this *Booking) CalculateCost(event models.Event, payment models.PaymentType, quantity int, ticketCost float32) (models.BookingCost, error) {
+func (this *Booking) CalculateCost(
+	event models.Event,
+	payment models.PaymentType,
+	quantity int,
+	ticketCost float32) (models.BookingCost, error) {
 
 	return event.GetTotal(payment.Id, quantity, ticketCost)
 }
