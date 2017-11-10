@@ -29,17 +29,17 @@ How to Use ...
 package main
 
 import (
-	"fmt"
-	"github.com/Silvin/booking"
-	"github.com/Silvin/booking/models"
+    "fmt"
+    "github.com/Silvin/booking"
+    "github.com/Silvin/booking/models"
 )
 
 func main() {
-	booking := booking.Booking{}
-	booking.Init("127.0.0.1:27017", "test")
-	booking.RemoveDB() //Remove the database if exists
+    booking := booking.Booking{}
+    booking.Init("127.0.0.1:27017", "test")
+    booking.RemoveDB() //Remove the database if exists
 
-	    //Define the payments type
+        //Define the payments type
     paypal, _ := booking.AddPaymentType("PayPal")
     mastercard, _ := booking.AddPaymentType("Mastercard")
     american, _ := booking.AddPaymentType("American Express")
